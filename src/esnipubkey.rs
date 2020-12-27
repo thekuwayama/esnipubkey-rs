@@ -53,3 +53,21 @@ fn prefix_esni(name: &str) -> String {
     if name.starts_with("_esni.") { name.to_string() }
     else { format!("_esni.{}", name) }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_prefix_esni() {
+        assert_eq!(
+            prefix_esni("example.com"),
+            "_esni.example.com"
+        );
+
+        assert_eq!(
+            prefix_esni("_esni.example.com"),
+            "_esni.example.com"
+        );
+    }
+}
