@@ -1,7 +1,7 @@
 # esnipubkey-rs
 
 [![Actions Status](https://github.com/thekuwayama/esnipubkey-rs/workflows/CI/badge.svg)](https://github.com/thekuwayama/esnipubkey-rs/actions?workflow=CI)
-[![MIT licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/thekuwayama/esnipubkey-rs/main/LICENSE.txt)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/thekuwayama/esnipubkey-rs/master/LICENSE.txt)
 
 `esnipubkey-rs` is CLI to fetch ESNI public key.
 
