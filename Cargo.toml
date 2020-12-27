@@ -1,5 +1,5 @@
 [package]
-name = "esnipubkey-rs"
+name = "esnipubkey"
 version = "0.1.0"
 authors = ["thekuwayama <thekuwayama@gmail.com>"]
 edition = "2018"
