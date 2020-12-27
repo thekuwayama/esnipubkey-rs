@@ -38,6 +38,11 @@ $ ./target/debug/esnipubkey cloudflare.com
 ```
 
 
+## Note
+
+[Before ECH there was (and is!) ESNI](https://blog.cloudflare.com/encrypted-client-hello/#before-ech-there-was-and-is-esni)
+
+
 ## License
 
 The CLI is available as open source under the terms of the MIT License.
