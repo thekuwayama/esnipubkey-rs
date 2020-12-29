@@ -12,8 +12,9 @@ fn main() {
     let matches = cli.get_matches();
     let name = matches
         .value_of("name")
-        .expect("Falid: not specify domain name");
+        .expect("Falied: not specify domain name");
 
-    let bytes = esnipubkey::fetch(name).expect("Faild: resolve domain name");
-    print!("{}", bytes.iter().map(|c| format!("{:02x?}", c)).collect::<Vec<_>>().join(" "));
+    let bytes = esnipubkey::fetch(name).expect("Failed: fetch ESNIKeys");
+    let esnikeys = esnipubkey::parse_esnikeys(&bytes).expect("Failed: parse ESNIKeys").1;
+    print!("{:?}", esnikeys);
 }
