@@ -34,7 +34,7 @@ ARGS:
 
 ```bash
 $ ./target/debug/esnipubkey cloudflare.com
-00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ESNIKeys { version: 65281, checksum: [1, 2, 3, 4], keys: [KeyShareEntry { group: 29, key_exchangeok: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] }], cipher_suites: [(19, 1)], padded_length: 260, not_before: 1608922800, not_after: 1609441200, extensions: [] }
 ```
 
 
@@ -45,4 +45,4 @@ $ ./target/debug/esnipubkey cloudflare.com
 
 ## License
 
-The CLI is available as open source under the terms of the MIT License.
+The CLI is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
