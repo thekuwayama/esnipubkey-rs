@@ -22,10 +22,11 @@ esnipubkey 0.1.0
 CLI to fetch ESNI public key
 
 USAGE:
-    esnipubkey-rs <name>
+    esnipubkey [FLAGS] <name>
 
 FLAGS:
     -h, --help       Prints help information
+        --hex        Prints ESNIKeys in hex
     -V, --version    Prints version information
 
 ARGS:
@@ -34,7 +35,64 @@ ARGS:
 
 ```bash
 $ ./target/debug/esnipubkey cloudflare.com
-ESNIKeys { version: 65281, checksum: [1, 2, 3, 4], keys: [KeyShareEntry { group: 29, key_exchangeok: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] }], cipher_suites: [(19, 1)], padded_length: 260, not_before: 1608922800, not_after: 1609441200, extensions: [] }
+ESNIKeys {
+    version: 65281,
+    checksum: [
+        1,
+        2,
+        3,
+        4
+    ],
+    keys: [
+        KeyShareEntry {
+            group: 29,
+            key_exchangeok: [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+            ],
+        },
+    ],
+    cipher_suites: [
+        (
+            19,
+            1,
+        )
+    ],
+    padded_length: 260,
+    not_before: 1608922800,
+    not_after: 1609441200,
+    extensions: [],
+}
 ```
 
 
