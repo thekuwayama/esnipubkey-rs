@@ -98,7 +98,7 @@ ESNIKeys {
 
 ## Note
 
-[Before ECH there was (and is!) ESNI](https://blog.cloudflare.com/encrypted-client-hello/#before-ech-there-was-and-is-esni)
+refer: [Before ECH there was (and is!) ESNI](https://blog.cloudflare.com/encrypted-client-hello/#before-ech-there-was-and-is-esni)
 
 
 ## License
