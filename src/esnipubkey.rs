@@ -105,13 +105,13 @@ named!(pub parse_esnikeys<&[u8], ESNIKeys>, do_parse!(
     ex_len: be_u16 >>
     ex_payload: take!(ex_len) >>
     (ESNIKeys {
-        version: version,
+        version,
         checksum: [c0, c1, c2, c3],
         keys: parse_key_share_entrys(kse_payload)?.1,
         cipher_suites: parse_cipher_suites(cs_payload)?.1,
-        padded_length: padded_length,
-        not_before: not_before,
-        not_after: not_after,
+        padded_length,
+        not_before,
+        not_after,
         extensions: ex_payload.into(),
     })        
 ));
@@ -125,7 +125,7 @@ named!(parse_key_share_entry<&[u8], KeyShareEntry>, do_parse!(
     ke_len: be_u16 >>
     ke_payload: take!(ke_len) >>
     (KeyShareEntry {
-        group: group,
+        group,
         key_exchange: ke_payload.into(),
     })
 ));
