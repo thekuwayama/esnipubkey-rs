@@ -46,7 +46,7 @@ ESNIKeys {
     keys: [
         KeyShareEntry {
             group: 29,
-            key_exchangeok: [
+            key_exchange: [
                 1,
                 1,
                 1,
