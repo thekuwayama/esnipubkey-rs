@@ -154,14 +154,14 @@ mod tests {
     #[test]
     fn test_parse_esnikeys() {
         let bytes: Vec<u8> = vec![
-            255, 1, // version
-            1, 2, 3, 4, // checksum
-            0, 36, 0, 29, 0, 32, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // keys
-            0, 2, 19, 1, // cipher_suites
-            1, 4, // padded_length
-            0, 0, 0, 0, 95, 230, 54, 176, // not_before
-            0, 0, 0, 0, 95, 238, 31, 176, // not_after
-            0, 0, // extensions
+            0xff, 0x01, // version
+            0x01, 0x02, 0x03, 0x04, // checksum
+            0x00, 0x24, 0x00, 0x1d, 0x00, 0x20, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, // keys
+            0x00, 0x02, 0x13, 0x01, // cipher_suites
+            0x01, 0x04, // padded_length
+            0x00, 0x00, 0x00, 0x00, 0x5f, 0xe6, 0x36, 0xb0, // not_before
+            0x00, 0x00, 0x00, 0x00, 0x5f, 0xee, 0x1f, 0xb0, // not_after
+            0x00, 0x00, // extensions
         ];
 
         let result = parse_esnikeys(&bytes[..]);
@@ -173,6 +173,8 @@ mod tests {
         assert_eq!(esnikeys.checksum, [1u8, 2u8, 3u8, 4u8]);
         assert_eq!(esnikeys.cipher_suites, [(19u8, 1u8)]);
         assert_eq!(esnikeys.padded_length, 260);
+        assert_eq!(esnikeys.not_before, 1608922800);
+        assert_eq!(esnikeys.not_after, 1609441200);
         assert!(esnikeys.extensions.is_empty());
     }
 }
