@@ -6,15 +6,11 @@ extern crate serde;
 
 use dohc::doh;
 use nom::{
-    named,
-    do_parse,
-    take,
-    number::streaming::{be_u8, be_u16, be_u64},
-    many0,
-    tuple,
-    complete,
+    complete, do_parse, many0, named,
+    number::streaming::{be_u16, be_u64, be_u8},
+    take, tuple,
 };
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[allow(unused_imports)]
 use std::io::Write;
@@ -63,8 +59,11 @@ pub fn fetch(name: &str) -> Result<Vec<u8>, failure::Error> {
 }
 
 fn prefix_esni(name: &str) -> String {
-    if name.starts_with("_esni.") { name.to_string() }
-    else { format!("_esni.{}", name) }
+    if name.starts_with("_esni.") {
+        name.to_string()
+    } else {
+        format!("_esni.{}", name)
+    }
 }
 
 type NamedGroup = u16;
@@ -113,7 +112,7 @@ named!(pub parse_esnikeys<&[u8], ESNIKeys>, do_parse!(
         not_before,
         not_after,
         extensions: ex_payload.into(),
-    })        
+    })
 ));
 
 named!(parse_cipher_suites<&[u8], Vec<CipherSuite>>,
@@ -140,15 +139,9 @@ mod tests {
 
     #[test]
     fn test_prefix_esni() {
-        assert_eq!(
-            prefix_esni("example.com"),
-            "_esni.example.com"
-        );
+        assert_eq!(prefix_esni("example.com"), "_esni.example.com");
 
-        assert_eq!(
-            prefix_esni("_esni.example.com"),
-            "_esni.example.com"
-        );
+        assert_eq!(prefix_esni("_esni.example.com"), "_esni.example.com");
     }
 
     #[test]
@@ -156,7 +149,9 @@ mod tests {
         let bytes: Vec<u8> = vec![
             0xff, 0x01, // version
             0x01, 0x02, 0x03, 0x04, // checksum
-            0x00, 0x24, 0x00, 0x1d, 0x00, 0x20, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, // keys
+            0x00, 0x24, 0x00, 0x1d, 0x00, 0x20, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+            0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+            0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, // keys
             0x00, 0x02, 0x13, 0x01, // cipher_suites
             0x01, 0x04, // padded_length
             0x00, 0x00, 0x00, 0x00, 0x5f, 0xe6, 0x36, 0xb0, // not_before
