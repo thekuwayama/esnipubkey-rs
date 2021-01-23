@@ -35,62 +35,19 @@ ARGS:
 
 ```bash
 $ ./target/debug/esnipubkey cloudflare.com
-ESNIKeys {
-    version: 65281,
-    checksum: [
-        1,
-        2,
-        3,
-        4
-    ],
+ESNIKey {
+    version: "ff01",
+    checksum: "[01, 02, 03, 04]",
     keys: [
         KeyShareEntry {
             group: 29,
-            key_exchange: [
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-            ],
-        },
+            key_exchange: "[01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01, 01]",
+        }
     ],
-    cipher_suites: [
-        (
-            19,
-            1,
-        )
-    ],
+    cipher_suites: "[(13, 01)]",
     padded_length: 260,
-    not_before: 1608922800,
-    not_after: 1609441200,
+    not_before: "Sat, 26 Dec 2020 04:00:00 +0900",
+    not_after: "Fri, 01 Jan 2021 04:00:00 +0900",
     extensions: [],
 }
 ```

@@ -1,3 +1,4 @@
+#[macro_use]
 extern crate clap;
 
 use clap::{App, Arg};
@@ -5,9 +6,9 @@ use clap::{App, Arg};
 mod esnipubkey;
 
 fn main() {
-    let cli = App::new("esnipubkey")
-        .version("0.1.0")
-        .about("CLI to fetch ESNI public key")
+    let cli = App::new(crate_name!())
+        .version(crate_version!())
+        .about(crate_description!())
         .arg(Arg::with_name("name").help("Query Name").required(true))
         .arg(
             Arg::with_name("hex")
