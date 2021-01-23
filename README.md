@@ -35,7 +35,7 @@ ARGS:
 
 ```bash
 $ ./target/debug/esnipubkey cloudflare.com
-ESNIKey {
+ESNIKeys {
     version: "ff01",
     checksum: "[01, 02, 03, 04]",
     keys: [

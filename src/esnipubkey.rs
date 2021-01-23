@@ -94,7 +94,7 @@ pub struct ESNIKeys {
 
 impl fmt::Debug for ESNIKeys {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("ESNIKey")
+        f.debug_struct("ESNIKeys")
             .field("version", &format!("{:04x}", self.version))
             .field("checksum", &format!("{:02x?}", self.checksum))
             .field("keys", &self.keys)
