@@ -1,9 +1,6 @@
-extern crate base64;
-extern crate dohc;
-extern crate failure;
-extern crate nom;
-extern crate serde;
+use std::fmt;
 
+use chrono::{Local, TimeZone};
 use dohc::doh;
 use nom::{
     complete, do_parse, many0, named,
@@ -68,15 +65,22 @@ fn prefix_esni(name: &str) -> String {
 
 type NamedGroup = u16;
 
-#[derive(Debug)]
 pub struct KeyShareEntry {
     group: NamedGroup,
     key_exchange: Vec<u8>,
 }
 
+impl fmt::Debug for KeyShareEntry {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("KeyShareEntry")
+            .field("group", &self.group)
+            .field("key_exchange", &format!("{:02x?}", self.key_exchange))
+            .finish()
+    }
+}
+
 type CipherSuite = (u8, u8);
 
-#[derive(Debug)]
 pub struct ESNIKeys {
     version: u16,
     checksum: [u8; 4],
@@ -86,6 +90,27 @@ pub struct ESNIKeys {
     not_before: u64,
     not_after: u64,
     extensions: Vec<u8>,
+}
+
+impl fmt::Debug for ESNIKeys {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ESNIKey")
+            .field("version", &format!("{:04x}", self.version))
+            .field("checksum", &format!("{:02x?}", self.checksum))
+            .field("keys", &self.keys)
+            .field("cipher_suites", &format!("{:02x?}", self.cipher_suites))
+            .field("padded_length", &self.padded_length)
+            .field(
+                "not_before",
+                &Local.timestamp(self.not_before as i64, 0).to_rfc2822(),
+            )
+            .field(
+                "not_after",
+                &Local.timestamp(self.not_after as i64, 0).to_rfc2822(),
+            )
+            .field("extensions", &self.extensions)
+            .finish()
+    }
 }
 
 named!(pub parse_esnikeys<&[u8], ESNIKeys>, do_parse!(
