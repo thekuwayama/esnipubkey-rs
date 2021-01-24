@@ -32,9 +32,7 @@ fn main() {
                 .join(" ")
         );
     } else {
-        let esnikeys = esnipubkey::parse_esnikeys(&bytes)
-            .expect("Failed: parse ESNIKeys")
-            .1;
+        let esnikeys = esnipubkey::parse_esnikeys(&bytes).expect("Failed: parse ESNIKeys");
         println!("{:#?}", esnikeys);
     }
 }
