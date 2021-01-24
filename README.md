@@ -6,18 +6,19 @@
 `esnipubkey-rs` is CLI to fetch ESNI public key.
 
 
-## Usage
+## Install
 
-You can build and run `esnipubkey-rs` with the following:
+You can install `esnipubkey-rs` with the following:
 
 ```bash
-$ git clone git@github.com:thekuwayama/esnipubkey-rs.git
+$ cargo install --git https://github.com/thekuwayama/esnipubkey-rs.git --branch main
+```
 
-$ cd esnipubkey-rs
 
-$ cargo build
+## Usage
 
-$ ./target/debug/esnipubkey --help
+```
+$ esnipubkey --help
 esnipubkey 0.1.0
 CLI to fetch ESNI public key
 
@@ -34,7 +35,7 @@ ARGS:
 ```
 
 ```bash
-$ ./target/debug/esnipubkey cloudflare.com
+$ esnipubkey cloudflare.com
 ESNIKeys {
     version: "ff01",
     checksum: "[01, 02, 03, 04]",
