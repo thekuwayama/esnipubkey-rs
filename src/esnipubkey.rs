@@ -128,8 +128,6 @@ pub fn parse_esnikeys(bytes: &[u8]) -> Result<ESNIKeys, Error> {
             hasher.update(check);
             let mut h: Vec<u8> = vec![0u8; 32];
             h.copy_from_slice(hasher.finalize().as_slice());
-            println!("{:02x?}", bytes);
-            println!("{:02x?}", h);
             if h[0] != bytes[2] || h[1] != bytes[3] || h[2] != bytes[4] || h[3] != bytes[5] {
                 Err(Error::new(ErrorKind::InvalidInput, "checksum mismatch"))
             } else {
