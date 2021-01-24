@@ -119,7 +119,7 @@ pub fn parse_esnikeys(bytes: &[u8]) -> Result<ESNIKeys, Error> {
     match do_parse_esnikeys(bytes) {
         IResult::Ok((_, keys)) => {
             // https://tools.ietf.org/html/draft-ietf-tls-esni-03#section-4.1
-            let mut check = bytes.clone().to_vec();
+            let mut check = bytes.to_vec();
             check[2] = 0u8;
             check[3] = 0u8;
             check[4] = 0u8;
