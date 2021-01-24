@@ -1,13 +1,15 @@
 use std::fmt;
+use std::io::{Error, ErrorKind};
 
 use chrono::{Local, TimeZone};
 use dohc::doh;
 use nom::{
     complete, do_parse, many0, named,
     number::streaming::{be_u16, be_u64, be_u8},
-    take, tuple,
+    take, tuple, IResult,
 };
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 
 #[allow(unused_imports)]
 use std::io::Write;
@@ -47,7 +49,7 @@ struct Response {
     answer: Vec<Answer>,
 }
 
-pub fn fetch(name: &str) -> Result<Vec<u8>, failure::Error> {
+pub fn fetch(name: &str) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
     let json = doh::resolve(&prefix_esni(name), "TXT")?;
     let deserialized: Response = serde_json::from_str(&json)?;
     let bytes = base64::decode(deserialized.answer[0].data.replace("\"", ""))?;
@@ -113,7 +115,32 @@ impl fmt::Debug for ESNIKeys {
     }
 }
 
-named!(pub parse_esnikeys<&[u8], ESNIKeys>, do_parse!(
+pub fn parse_esnikeys(bytes: &[u8]) -> Result<ESNIKeys, Error> {
+    match do_parse_esnikeys(bytes) {
+        IResult::Ok((_, keys)) => {
+            // https://tools.ietf.org/html/draft-ietf-tls-esni-03#section-4.1
+            let mut check = bytes.to_vec();
+            check[2] = 0u8;
+            check[3] = 0u8;
+            check[4] = 0u8;
+            check[5] = 0u8;
+            let mut hasher = Sha256::new();
+            hasher.update(check);
+            let mut h: Vec<u8> = vec![0u8; 32];
+            h.copy_from_slice(hasher.finalize().as_slice());
+            println!("{:02x?}", bytes);
+            println!("{:02x?}", h);
+            if h[0] != bytes[2] || h[1] != bytes[3] || h[2] != bytes[4] || h[3] != bytes[5] {
+                Err(Error::new(ErrorKind::InvalidInput, "checksum mismatch"))
+            } else {
+                Ok(keys)
+            }
+        }
+        _ => Err(Error::new(ErrorKind::InvalidInput, "failed to parse")),
+    }
+}
+
+named!(do_parse_esnikeys<&[u8], ESNIKeys>, do_parse!(
     version: be_u16 >>
     c0: be_u8 >>
     c1: be_u8 >>
@@ -165,7 +192,6 @@ mod tests {
     #[test]
     fn test_prefix_esni() {
         assert_eq!(prefix_esni("example.com"), "_esni.example.com");
-
         assert_eq!(prefix_esni("_esni.example.com"), "_esni.example.com");
     }
 
@@ -173,7 +199,7 @@ mod tests {
     fn test_parse_esnikeys() {
         let bytes: Vec<u8> = vec![
             0xff, 0x01, // version
-            0x01, 0x02, 0x03, 0x04, // checksum
+            0xf8, 0xb1, 0xe1, 0x6e, // checksum
             0x00, 0x24, 0x00, 0x1d, 0x00, 0x20, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
             0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
             0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, // keys
@@ -188,9 +214,9 @@ mod tests {
         assert!(result.is_ok());
         let _ = writeln!(&mut std::io::stderr(), "{:?}", result);
 
-        let esnikeys = result.unwrap().1;
+        let esnikeys = result.unwrap();
         assert_eq!(esnikeys.version, u16::from_str_radix("ff01", 16).unwrap());
-        assert_eq!(esnikeys.checksum, [1u8, 2u8, 3u8, 4u8]);
+        assert_eq!(esnikeys.checksum, [248u8, 177u8, 225u8, 110u8]);
         assert_eq!(esnikeys.cipher_suites, [(19u8, 1u8)]);
         assert_eq!(esnikeys.padded_length, 260);
         assert_eq!(esnikeys.not_before, 1608922800);

@@ -38,7 +38,7 @@ ARGS:
 $ esnipubkey cloudflare.com
 ESNIKeys {
     version: "ff01",
-    checksum: "[01, 02, 03, 04]",
+    checksum: "[f8, b1, e1, 6e]",
     keys: [
         KeyShareEntry {
             group: 29,
