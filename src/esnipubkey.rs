@@ -4,9 +4,11 @@ use std::io::{Error, ErrorKind};
 use chrono::{Local, TimeZone};
 use dohc::doh;
 use nom::{
-    complete, do_parse, many0, named,
-    number::streaming::{be_u16, be_u64, be_u8},
-    take, tuple, IResult,
+    bytes::complete::take,
+    multi::many0,
+    number::complete::{be_u16, be_u64, be_u8},
+    sequence::pair,
+    IResult,
 };
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -138,50 +140,56 @@ pub fn parse_esnikeys(bytes: &[u8]) -> Result<ESNIKeys, Error> {
     }
 }
 
-named!(do_parse_esnikeys<&[u8], ESNIKeys>, do_parse!(
-    version: be_u16 >>
-    c0: be_u8 >>
-    c1: be_u8 >>
-    c2: be_u8 >>
-    c3: be_u8 >>
-    kse_len: be_u16 >>
-    kse_payload: take!(kse_len) >>
-    cs_len: be_u16 >>
-    cs_payload: take!(cs_len) >>
-    padded_length: be_u16 >>
-    not_before: be_u64 >>
-    not_after: be_u64 >>
-    ex_len: be_u16 >>
-    ex_payload: take!(ex_len) >>
-    (ESNIKeys {
-        version,
-        checksum: [c0, c1, c2, c3],
-        keys: parse_key_share_entrys(kse_payload)?.1,
-        cipher_suites: parse_cipher_suites(cs_payload)?.1,
-        padded_length,
-        not_before,
-        not_after,
-        extensions: ex_payload.into(),
-    })
-));
+fn do_parse_esnikeys(input: &[u8]) -> IResult<&[u8], ESNIKeys> {
+    let (input, version) = be_u16(input)?;
+    let (input, c0) = be_u8(input)?;
+    let (input, c1) = be_u8(input)?;
+    let (input, c2) = be_u8(input)?;
+    let (input, c3) = be_u8(input)?;
+    let (input, kse_len) = be_u16(input)?;
+    let (input, kse_payload) = take(kse_len)(input)?;
+    let (input, cs_len) = be_u16(input)?;
+    let (input, cs_payload) = take(cs_len)(input)?;
+    let (input, padded_length) = be_u16(input)?;
+    let (input, not_before) = be_u64(input)?;
+    let (input, not_after) = be_u64(input)?;
+    let (input, ex_len) = be_u16(input)?;
+    let (input, ex_payload) = take(ex_len)(input)?;
+    Ok((
+        input,
+        ESNIKeys {
+            version,
+            checksum: [c0, c1, c2, c3],
+            keys: parse_key_share_entrys(kse_payload)?.1,
+            cipher_suites: parse_cipher_suites(cs_payload)?.1,
+            padded_length,
+            not_before,
+            not_after,
+            extensions: ex_payload.into(),
+        },
+    ))
+}
 
-named!(parse_cipher_suites<&[u8], Vec<CipherSuite>>,
-    many0!(complete!(tuple!(be_u8, be_u8)))
-);
+fn parse_cipher_suites(input: &[u8]) -> IResult<&[u8], Vec<CipherSuite>> {
+    many0(pair(be_u8, be_u8))(input)
+}
 
-named!(parse_key_share_entry<&[u8], KeyShareEntry>, do_parse!(
-    group: be_u16 >>
-    ke_len: be_u16 >>
-    ke_payload: take!(ke_len) >>
-    (KeyShareEntry {
-        group,
-        key_exchange: ke_payload.into(),
-    })
-));
+fn parse_key_share_entry(input: &[u8]) -> IResult<&[u8], KeyShareEntry> {
+    let (input, group) = be_u16(input)?;
+    let (input, ke_len) = be_u16(input)?;
+    let (input, ke_payload) = take(ke_len)(input)?;
+    Ok((
+        input,
+        KeyShareEntry {
+            group,
+            key_exchange: ke_payload.into(),
+        },
+    ))
+}
 
-named!(parse_key_share_entrys<&[u8], Vec<KeyShareEntry>>,
-    many0!(complete!(parse_key_share_entry))
-);
+fn parse_key_share_entrys(input: &[u8]) -> IResult<&[u8], Vec<KeyShareEntry>> {
+    many0(parse_key_share_entry)(input)
+}
 
 #[cfg(test)]
 mod tests {
