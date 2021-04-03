@@ -1,6 +1,5 @@
-use std::error;
+use anyhow::{anyhow, Context, Result};
 use std::fmt;
-use std::io::{self, ErrorKind};
 
 use chrono::{Local, TimeZone};
 use dohc::doh;
@@ -52,12 +51,12 @@ struct Response {
     answer: Vec<Answer>,
 }
 
-pub fn fetch(name: &str) -> Result<Vec<u8>, Box<dyn error::Error>> {
+pub fn fetch(name: &str) -> Result<Vec<u8>> {
     let json = doh::resolve(&prefix_esni(name), "TXT")?;
     let deserialized: Response = serde_json::from_str(&json)?;
-    let bytes = base64::decode(deserialized.answer[0].data.replace("\"", ""))?;
 
-    Ok(bytes)
+    base64::decode(deserialized.answer[0].data.replace("\"", ""))
+        .with_context(|| format!("failed base64 decoding"))
 }
 
 fn prefix_esni(name: &str) -> String {
@@ -118,7 +117,7 @@ impl fmt::Debug for ESNIKeys {
     }
 }
 
-pub fn parse_esnikeys(bytes: &[u8]) -> Result<ESNIKeys, Box<dyn error::Error>> {
+pub fn parse_esnikeys(bytes: &[u8]) -> Result<ESNIKeys> {
     match do_parse_esnikeys(bytes) {
         IResult::Ok((_, keys)) => {
             // https://tools.ietf.org/html/draft-ietf-tls-esni-03#section-4.1
@@ -132,18 +131,12 @@ pub fn parse_esnikeys(bytes: &[u8]) -> Result<ESNIKeys, Box<dyn error::Error>> {
             let mut h: Vec<u8> = vec![0u8; 32];
             h.copy_from_slice(hasher.finalize().as_slice());
             if h[0] != bytes[2] || h[1] != bytes[3] || h[2] != bytes[4] || h[3] != bytes[5] {
-                Err(Box::new(io::Error::new(
-                    ErrorKind::InvalidInput,
-                    "checksum mismatch",
-                )))
+                Err(anyhow!("checksum mismatch"))
             } else {
                 Ok(keys)
             }
         }
-        _ => Err(Box::new(io::Error::new(
-            ErrorKind::InvalidInput,
-            "failed to parse",
-        ))),
+        _ => Err(anyhow!("failed to parse")),
     }
 }
 
