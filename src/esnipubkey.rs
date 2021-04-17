@@ -51,8 +51,8 @@ struct Response {
     answer: Vec<Answer>,
 }
 
-pub fn fetch(name: &str) -> Result<Vec<u8>> {
-    let json = doh::resolve(&prefix_esni(name), "TXT")?;
+pub async fn fetch(name: &str) -> Result<Vec<u8>> {
+    let json = doh::resolve(&prefix_esni(name), "TXT").await?;
     let deserialized: Response = serde_json::from_str(&json)?;
 
     base64::decode(deserialized.answer[0].data.replace("\"", ""))
