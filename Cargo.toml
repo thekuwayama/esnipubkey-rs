@@ -12,8 +12,9 @@ anyhow = "1.0"
 base64 = "0.13"
 chrono = "0.4"
 clap = "2.33"
-dohc = { git = "https://github.com/thekuwayama/dohc-rs", rev = "43d68d6" }
+dohc = { git = "https://github.com/thekuwayama/dohc-rs", rev = "3d558e5" }
 nom = "6.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sha2 = "0.9"
+tokio = { version = "1.5", features = ["full"] }

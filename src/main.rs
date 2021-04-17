@@ -1,11 +1,13 @@
 #[macro_use]
 extern crate clap;
 
+use anyhow::Result;
 use clap::{App, Arg};
 
 mod esnipubkey;
 
-fn main() {
+#[tokio::main]
+async fn main() -> Result<()> {
     let cli = App::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
@@ -21,7 +23,9 @@ fn main() {
         .value_of("name")
         .expect("Falied: not specify domain name");
 
-    let bytes = esnipubkey::fetch(name).expect("Failed: fetch ESNIKeys");
+    let bytes = esnipubkey::fetch(name)
+        .await
+        .expect("Failed: fetch ESNIKeys");
     if matches.is_present("hex") {
         println!(
             "hex: {}",
@@ -35,4 +39,6 @@ fn main() {
         let esnikeys = esnipubkey::parse_esnikeys(&bytes).expect("Failed: parse ESNIKeys");
         println!("{:#?}", esnikeys);
     }
+
+    Ok(())
 }
