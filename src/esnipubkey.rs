@@ -56,7 +56,7 @@ pub async fn fetch(name: &str) -> Result<Vec<u8>> {
     let deserialized: Response = serde_json::from_str(&json)?;
 
     base64::decode(deserialized.answer[0].data.replace("\"", ""))
-        .with_context(|| format!("failed base64 decoding"))
+        .with_context(|| "failed base64 decoding".to_string())
 }
 
 fn prefix_esni(name: &str) -> String {
